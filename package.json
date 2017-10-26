@@ -1,0 +1,23 @@
+{
+  "name": "node-tutorial",
+  "version": "1.0.0",
+  "description": "node tutorials",
+  "main": "index.js",
+  "repository": {
+    "url": ""
+  },
+  "dependencies": {
+    "javascripting": "^2.6.1",
+    "learnyouhtml": "^1.0.0",
+    "learnyounode": "^3.5.10",
+    "stream-adventure": "^4.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "learnyounode": "learnyounode",
+    "javascripting": "javascripting"
+  },
+  "author": "",
+  "license": "ISC"
+}
