@@ -1,6 +1,7 @@
 var
   path = require("path"),
-  fs = require("fs");
+  fs = require("fs"),
+  fork = require("child_process").fork;
 
 function makeEnvironment() {
   return require('workshopper-adventure')({
@@ -11,18 +12,26 @@ function makeEnvironment() {
   });
 }
 
-function tryLoad(moduleName) {
-  try {
-    var result = require(moduleName);
-    if (typeof(result.execute) === "function") {
-      return result;
-    }
-  } catch (e) {
+var moduleLoaders = {
+  "stream-adventure": () => {
+    require("stream-adventure/bin/cmd");
+  },
+  default: (moduleName) => {
+    var mod = require(moduleName);
+    mod.execute([]);
   }
-  throw new Error(`don't know how to load ${moduleName}`);
 }
 
-var 
+function tryRunModule(moduleName) {
+  var loader = moduleLoaders[moduleName] || moduleLoaders.default;
+  try {
+    loader(moduleName);
+  } catch (e) {
+    throw new Error(`Don't know how to load ${moduleName}\n\nError was: ${e}`);
+  }
+}
+
+var
   tutorials = makeEnvironment(),
   packageConfig = require("./package.json"),
   entries = Object.keys(packageConfig.dependencies).map(s => s.toUpperCase());
@@ -31,10 +40,10 @@ tutorials.addAll(entries.map(function (item) {
   return {
     name: item,
     fn: function () {
-      var
-        moduleName = item.toLowerCase().replace(/\s/g, ""),
-        chosen = tryLoad(moduleName);
-      chosen.execute([]);
+      var moduleName = item.toLowerCase().replace(/\s/g, "");
+
+      tryRunModule(moduleName);
+
       return {
         getExerciseText: function () {
           return "";
@@ -43,5 +52,10 @@ tutorials.addAll(entries.map(function (item) {
     }
   }
 }));
+
+// process.on("beforeExit", () => {
+//   fs.writeFileSync("final.txt", "moo", { encoding: "utf8" });
+//   fork("index");
+// });
 
 tutorials.execute(process.argv.slice(2));

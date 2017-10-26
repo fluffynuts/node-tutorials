@@ -12,9 +12,13 @@
     "learnyounode": "^3.5.10",
     "stream-adventure": "^4.0.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
   "scripts": {
     "start": "node index.js",
+    "stream-adventure": "stream-adventure",
+    "learnyouhtml": "learnyouhtml",
     "learnyounode": "learnyounode",
     "javascripting": "javascripting"
   },
